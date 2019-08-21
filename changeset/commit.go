@@ -32,9 +32,25 @@ const (
 
 var commitIDRE = regexp.MustCompile(`^[a-f0-9]{40}$`)
 
-// Get tries to fetch the first 7 digitals of GitHub commit ID from HEAD file in
-// KO_DATA_PATH. If it fails, it returns the error it gets.
+// Get returns the first 7 digitals of GitHub commit ID from HEAD file in
+// KO_DATA_PATH. If it fails to get, it returns the error it gets.
 func Get() (string, error) {
+	commitID, err := getCommitID()
+	if err == nil {
+		return commitID[:7], nil
+	}
+	return "", err
+}
+
+// GetFull returns the full GitHub commit ID from HEAD file in KO_DATA_PATH.
+// If it fails to get, it returns the error it gets.
+func GetFull() (string, error) {
+	return getCommitID()
+}
+
+// getCommitID tries to fetch the GitHub commit ID from HEAD file in KO_DATA_PATH.
+// If it fails, it returns the error it gets.
+func getCommitID() (string, error) {
 	data, err := readFileFromKoData(commitIDFile)
 	if err != nil {
 		return "", err
